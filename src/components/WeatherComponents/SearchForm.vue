@@ -59,7 +59,7 @@ const validateInput = (): boolean => {
   }
 
   // TEST VALUE FOR LETTERS ONLY
-  const testSearchValue = new RegExp('(^[a-zA-Z]+[,]?)', 'g').test(searchInputModel.value)
+  const testSearchValue = new RegExp('^(([a-zA-Z ](,)?)*)+$', 'g').test(searchInputModel.value)
   if (testSearchValue === false) {
     errorMessage.value = setErrorMessage('letters-only')
     return false
