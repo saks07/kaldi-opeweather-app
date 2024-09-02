@@ -34,7 +34,6 @@ export const useCityStore = defineStore('city', () => {
     if (result.error) {
       setCityWeatherData(null)
       messageStore.setDisplayMessage(true)
-      console.log(result.error)
       messageStore.setMessageText(result.error.message)
       messageStore.setMessageStatus(result.error.cod > 400 ? 'error' : 'default')
     }

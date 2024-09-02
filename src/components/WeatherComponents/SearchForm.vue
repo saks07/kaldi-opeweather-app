@@ -1,22 +1,31 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useCityStore } from '@/stores/city'
 import AppInput from '../App/AppInput.vue'
 import AppButton from '../App/AppButton.vue'
 
 type ErrorMessages = { required: string; 'letters-only': string }
 
+const router = useRouter()
+const route = useRoute()
 const cityStore = useCityStore()
 
 // DATA PROPERTIES
 const errorMessage = ref<string>('')
 const searchInputModel = ref<string>('')
 
-// STATIC PROPERTIES
-const errorMessages: ErrorMessages = {
+// CONSTANTS
+const ERROR_MESSAGES: ErrorMessages = {
   required: 'Please insert the name of the city',
   'letters-only': 'Only letters allowed'
 }
+
+// LIFECYCLE METHODS
+onMounted(async () => {
+  await router.isReady()
+  searchInputModel.value = route.query.q ? String(route.query.q) : ''
+})
 
 // METHODS
 const searchCity = async (event: Event): Promise<void> => {
@@ -28,6 +37,7 @@ const searchCity = async (event: Event): Promise<void> => {
   }
 
   await cityStore.getCityWeatherData(searchInputModel.value)
+  router.push({ name: route.name, query: { q: searchInputModel.value } })
 }
 
 const setErrorMessage = (key: keyof ErrorMessages): string => {
@@ -35,7 +45,7 @@ const setErrorMessage = (key: keyof ErrorMessages): string => {
     return ''
   }
 
-  return errorMessages[key]
+  return ERROR_MESSAGES[key]
 }
 
 const resetErrorMessage = (): void => {
@@ -73,6 +83,15 @@ const inputError = computed<boolean>(() => {
 
 const searchingCityWeather = computed<boolean>(() => {
   return cityStore.searchingCityWeatherData
+})
+
+// WATCHERS
+watch(route, (value) => {
+  if (!value.query.q) {
+    return
+  }
+
+  searchInputModel.value = String(value.query.q)
 })
 </script>
 
