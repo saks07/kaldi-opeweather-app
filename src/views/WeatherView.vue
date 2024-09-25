@@ -45,7 +45,7 @@ watch(route, (value) => {
   <main class="main">
     <SearchComponent />
     <AppLoader v-if="searchingCityWeather" :width="64" :height="64" />
-    <CityWeather v-if="cityWeather" :city="cityWeather" />
+    <CityWeather v-if="cityWeather && !searchingCityWeather" :city="cityWeather" />
   </main>
 </template>
 
